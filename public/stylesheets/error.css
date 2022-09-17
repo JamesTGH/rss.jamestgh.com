@@ -1,0 +1,20 @@
+html {
+  height: 100%;
+}
+body {
+  font-family: 'Lato', sans-serif;
+  color: #33437d;
+  background-color: #1b1c1d;
+  margin: 0;
+}
+#error {
+  display: table;
+  width: 100%;
+  height: 100vh;
+}
+.text {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 42px;
+}
