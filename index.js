@@ -13,7 +13,7 @@ app.locals.pretty = true
 app.disable('x-powered-by')
 
 app.get('/', (request, response) => {
-    response.status(301).redirect('https://jamestgh.com')
+    response.render('index')
 })
 
 app.get('/iptorrents', (request, response) => {
@@ -29,7 +29,7 @@ app.get('/iptorrents', (request, response) => {
             db.db(mongodb.split('/')[3]).collection(`iptorrents_${request.query.uid}_${request.query.key}`).find({}).sort({date: -1}).limit(128).toArray((error, data) => {
                 if (error) throw error
                 response.type('application/xml')
-                response.render('index', {
+                response.render('torrentrss', {
                     rss_title: 'IPTorrents | 1080p.*(WEB-DL|WEB DL).*(CMRG|EVO) | Movies',
                     rss_link: 'https://iptorrents.com/',
                     rss_description: 'Custom IPTorrents RSS Feed',
@@ -56,7 +56,7 @@ app.get('/torrenting', (request, response) => {
             db.db(mongodb.split('/')[3]).collection(`torrenting_${request.query.uid}_${request.query.key}`).find({}).sort({date: -1}).limit(128).toArray((error, data) => {
                 if (error) throw error
                 response.type('application/xml')
-                response.render('index', {
+                response.render('torrentrss', {
                     rss_title: 'Torrenting | 1080p.*(WEB-DL|WEB DL).*(CMRG|EVO) | Movies',
                     rss_link: 'https://torrenting.com/',
                     rss_description: 'Custom Torrenting RSS Feed',
@@ -81,7 +81,7 @@ app.get('/privatehd', (request, response) => {
             db.db(mongodb.split('/')[3]).collection(`privatehd_${request.query.pid}`).find({}).sort({date: -1}).limit(128).toArray((error, data) => {
                 if (error) throw error
                 response.type('application/xml')
-                response.render('index', {
+                response.render('torrentrss', {
                     rss_title: 'PrivateHD | 1080p.*(WEB-DL|WEB DL).*(CMRG|EVO) | Movies',
                     rss_link: 'https://privatehd.to/',
                     rss_description: 'Custom PrivateHD RSS Feed',
@@ -104,7 +104,7 @@ app.get('/torrentgalaxy', (request, response) => {
         db.db(mongodb.split('/')[3]).collection(`torrentgalaxy`).find({}).sort({date: -1}).limit(128).toArray((error, data) => {
             if (error) throw error
             response.type('application/xml')
-            response.render('index', {
+            response.render('torrentrss', {
                 rss_title: 'TorrentGalaxy | 1080p.*(WEB-DL|WEB DL).*(CMRG|EVO) | Movies',
                 rss_link: 'https://torrentgalaxy.to/',
                 rss_description: 'Custom TorrentGalaxy RSS Feed',
