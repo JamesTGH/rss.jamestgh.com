@@ -29,53 +29,49 @@ html(lang='en')
             }
             return ''
         }
-        window.onload = function() {
-            if (getCookie('iptorrentsuid') && getCookie('iptorrentskey')) {
-                document.getElementById('iptorrentsuid').value = getCookie('iptorrentsuid')
-                document.getElementById('iptorrentskey').value = getCookie('iptorrentskey')
-                document.getElementById('iptorrentsurl').href = document.getElementById('iptorrentsurl').text = 'https://rss.jamestgh.com/iptorrents?uid=' + getCookie('iptorrentsuid') + '&key=' + getCookie('iptorrentskey')
+        function data(provider, command) {
+            if (provider == 'iptorrents') {
+                if (command == 'save') {['iptorrentsuid', 'iptorrentskey'].forEach((name) => setCookie(name, document.getElementById(name).value, 364))}
+                if (command == 'delete') {['iptorrentsuid', 'iptorrentskey'].forEach((name) => document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`)}
             }
-            if (getCookie('torrentinguid') && getCookie('torrentingkey')) {
-                document.getElementById('torrentinguid').value = getCookie('torrentinguid')
-                document.getElementById('torrentingkey').value = getCookie('torrentingkey')
-                document.getElementById('torrentingurl').href = document.getElementById('torrentingurl').text = 'https://rss.jamestgh.com/torrenting?uid=' + getCookie('torrentinguid') + '&key=' + getCookie('torrentingkey')
+            if (provider == 'torrenting') {
+                if (command == 'save') {['torrentinguid', 'torrentingkey'].forEach((name) => setCookie(name, document.getElementById(name).value, 364))}
+                if (command == 'delete') {['torrentinguid', 'torrentingkey'].forEach((name) => document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`)}
             }
-            if (getCookie('privatehdpid')) {
-                document.getElementById('privatehdpid').value = getCookie('privatehdpid')
-                document.getElementById('privatehdurl').href = document.getElementById('privatehdurl').text = 'https://rss.jamestgh.com/privatehd?pid=' + getCookie('privatehdpid')
+            if (provider == 'privatehd') {
+                if (command == 'save') {['privatehdpid'].forEach((name) => setCookie(name, document.getElementById(name).value, 364))}
+                if (command == 'delete') {['privatehdpid'].forEach((name) => document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`)}
             }
+            document.getElementById('iptorrentsurl').href = document.getElementById('iptorrentsurl').innerHTML = 'https://rss.jamestgh.com/iptorrents?uid=' + getCookie('iptorrentsuid') + '&key=' + getCookie('iptorrentskey')
+            document.getElementById('torrentingurl').href = document.getElementById('torrentingurl').innerHTML = 'https://rss.jamestgh.com/torrenting?uid=' + getCookie('torrentinguid') + '&key=' + getCookie('torrentingkey')
+            document.getElementById('privatehdurl').href = document.getElementById('privatehdurl').innerHTML = 'https://rss.jamestgh.com/privatehd?pid=' + getCookie('privatehdpid')
         }
-        function iptorrents() {
-            setCookie('iptorrentsuid', document.getElementById('iptorrentsuid').value, 364)
-            setCookie('iptorrentskey', document.getElementById('iptorrentskey').value, 364)
-        }
-        function torrenting() {
-            setCookie('torrentinguid', document.getElementById('torrentinguid').value, 364)
-            setCookie('torrentingkey', document.getElementById('torrentingkey').value, 364)
-        }
-        function privatehd() {
-            setCookie('privatehdpid', document.getElementById('privatehdpid').value, 364)
-        }
-  body
-    form(onsubmit='iptorrents()')
+  body(onload='data()')
+    form
+        | IPTorrents
         label UID:
-        input#iptorrentsuid(type='text', name='iptorrentsuid', required)
+        input#iptorrentsuid(type='text', required)
         label KEY:
-        input#iptorrentskey(type='text', name='iptorrentskey', required)
-        input(type='submit', value='IPTorrents')
+        input#iptorrentskey(type='text', required)
+        input(onclick='data("iptorrents", "save")', type='button', value='Save')
+        input(onclick='data("iptorrents", "delete")', type='button', value='Delete')
         br
         a#iptorrentsurl(href='https://rss.jamestgh.com/iptorrents', target='_blank') https://rss.jamestgh.com/iptorrents
-    form(onsubmit='torrenting()')
+    form
+        | Torrenting
         label UID:
-        input#torrentinguid(type='text', name='torrentinguid', required)
+        input#torrentinguid(type='text', required)
         label KEY:
-        input#torrentingkey(type='text', name='torrentingkey', required)
-        input(type='submit', value='Torrenting')
+        input#torrentingkey(type='text', required)
+        input(onclick='torrenting("save")', type='button', value='Save')
+        input(onclick='torrenting("delete")', type='button', value='Delete')
         br
         a#torrentingurl(href='https://rss.jamestgh.com/torrenting', target='_blank') https://rss.jamestgh.com/torrenting
-    form(onsubmit='privatehd()')
+    form
+        | PrivateHD
         label PID:
-        input#privatehdpid(type='text', name='privatehdpid', required)
-        input(type='submit', value='PrivateHD')
+        input#privatehdpid(type='text', required)
+        input(onclick='privatehd("save")', type='button', value='Save')
+        input(onclick='privatehd("delete")', type='button', value='Delete')
         br
         a#privatehdurl(href='https://rss.jamestgh.com/privatehd', target='_blank') https://rss.jamestgh.com/privatehd
