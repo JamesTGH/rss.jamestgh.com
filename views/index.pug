@@ -63,15 +63,15 @@ html(lang='en')
         input#torrentinguid(type='text', required)
         label KEY:
         input#torrentingkey(type='text', required)
-        input(onclick='torrenting("save")', type='button', value='Save')
-        input(onclick='torrenting("delete")', type='button', value='Delete')
+        input(onclick='data("torrenting", "save")', type='button', value='Save')
+        input(onclick='data("torrenting", "delete")', type='button', value='Delete')
         br
         a#torrentingurl(href='https://rss.jamestgh.com/torrenting', target='_blank') https://rss.jamestgh.com/torrenting
     form
         | PrivateHD
         label PID:
         input#privatehdpid(type='text', required)
-        input(onclick='privatehd("save")', type='button', value='Save')
-        input(onclick='privatehd("delete")', type='button', value='Delete')
+        input(onclick='data("privatehd", "save")', type='button', value='Save')
+        input(onclick='data("privatehd", "delete")', type='button', value='Delete')
         br
         a#privatehdurl(href='https://rss.jamestgh.com/privatehd', target='_blank') https://rss.jamestgh.com/privatehd
