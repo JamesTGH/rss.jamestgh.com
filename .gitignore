@@ -1,3 +1,4 @@
 node_modules/
+.env
 torrentrss.cron.js
 torrentrss.dev.js

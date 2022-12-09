@@ -1,35 +1,37 @@
+const path = require('path')
+require('dotenv').config({ path: path.join(__dirname, '/.env') })
 const express = require('express')
 const app = express()
-const path = require('path')
 const torrentrss = require('./torrentrss')
-const MongoClient = require('mongodb').MongoClient
-const mongodb = 'mongodb://127.0.0.1:27017/torrentrss'
+const { MongoClient, ServerApiVersion } = require('mongodb')
+const mongodb = process.env.MONGODB
 
-app.set('port', process.env.PORT || 3777)
+
+app.set('port', process.env.PORT)
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'pug')
 app.use(express.static(path.join(__dirname, 'public')))
 app.locals.pretty = true
 app.disable('x-powered-by')
 
-app.get('/', (request, response) => {
-    response.render('index')
+app.get('/', (req, res) => {
+    res.render('index')
 })
 
-app.get('/iptorrents', (request, response) => {
-    if (request.query.uid && request.query.key) {
+app.get('/iptorrents', (req, res) => {
+    if (req.query.uid && req.query.key) {
         torrentrss.search('iptorrents', 'https://iptorrents.com/torrents/rss', mongodb, {
-            uid: request.query.uid,
-            key: request.query.key,
+            uid: req.query.uid,
+            key: req.query.key,
             genre: '20',
             regex: '1080p.*(WEB-DL|WEB DL).*(CMRG|EVO)'
         })
-        MongoClient.connect(mongodb.substring(0, mongodb.lastIndexOf('/')), {useUnifiedTopology: true}, (error, db) => {
-            if (error) throw error
-            db.db(mongodb.split('/')[3]).collection(`iptorrents_${request.query.uid}_${request.query.key}`).find({}).sort({date: -1}).limit(128).toArray((error, data) => {
-                if (error) throw error
-                response.type('application/xml')
-                response.render('torrentrss', {
+        MongoClient.connect(mongodb, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 }, (err, db) => {
+            if (err) throw err
+            db.db(mongodb.split('/')[3]).collection(`iptorrents_${req.query.uid}_${req.query.key}`).find({}).sort({date: -1}).limit(128).toArray((err, data) => {
+                if (err) throw err
+                res.type('application/xml')
+                res.render('torrentrss', {
                     rss_title: 'IPTorrents | 1080p.*(WEB-DL|WEB DL).*(CMRG|EVO) | Movies',
                     rss_link: 'https://iptorrents.com/',
                     rss_description: 'Custom IPTorrents RSS Feed',
@@ -39,24 +41,24 @@ app.get('/iptorrents', (request, response) => {
             })
         })
     } else {
-        response.status(401).render('error', {status: '401: Unauthorized'})
+        res.status(401).render('error', {status: '401: Unauthorized'})
     }
 })
 
-app.get('/torrenting', (request, response) => {
-    if (request.query.uid && request.query.key) {
+app.get('/torrenting', (req, res) => {
+    if (req.query.uid && req.query.key) {
         torrentrss.search('torrenting', 'https://torrenting.com/torrents/rss', mongodb, {
-            uid: request.query.uid,
-            key: request.query.key,
+            uid: req.query.uid,
+            key: req.query.key,
             genre: '49;3;38;1;40;47;11',
             regex: '1080p.*(WEB-DL|WEB DL).*(CMRG|EVO)'
         })
-        MongoClient.connect(mongodb.substring(0, mongodb.lastIndexOf('/')), {useUnifiedTopology: true}, (error, db) => {
-            if (error) throw error
-            db.db(mongodb.split('/')[3]).collection(`torrenting_${request.query.uid}_${request.query.key}`).find({}).sort({date: -1}).limit(128).toArray((error, data) => {
-                if (error) throw error
-                response.type('application/xml')
-                response.render('torrentrss', {
+        MongoClient.connect(mongodb, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 }, (err, db) => {
+            if (err) throw err
+            db.db(mongodb.split('/')[3]).collection(`torrenting_${req.query.uid}_${req.query.key}`).find({}).sort({date: -1}).limit(128).toArray((err, data) => {
+                if (err) throw err
+                res.type('application/xml')
+                res.render('torrentrss', {
                     rss_title: 'Torrenting | 1080p.*(WEB-DL|WEB DL).*(CMRG|EVO) | Movies',
                     rss_link: 'https://torrenting.com/',
                     rss_description: 'Custom Torrenting RSS Feed',
@@ -66,22 +68,22 @@ app.get('/torrenting', (request, response) => {
             })
         })
     } else {
-        response.status(401).render('error', {status: '401: Unauthorized'})
+        res.status(401).render('error', {status: '401: Unauthorized'})
     }
 })
 
-app.get('/privatehd', (request, response) => {
-    if (request.query.pid) {
+app.get('/privatehd', (req, res) => {
+    if (req.query.pid) {
         torrentrss.search('privatehd', 'https://privatehd.to/rss/torrents/movie', mongodb, {
-            pid: request.query.pid,
+            pid: req.query.pid,
             regex: '1080p.*(WEB-DL|WEB DL).*(CMRG|EVO)'
         })
-        MongoClient.connect(mongodb.substring(0, mongodb.lastIndexOf('/')), {useUnifiedTopology: true}, (error, db) => {
-            if (error) throw error
-            db.db(mongodb.split('/')[3]).collection(`privatehd_${request.query.pid}`).find({}).sort({date: -1}).limit(128).toArray((error, data) => {
-                if (error) throw error
-                response.type('application/xml')
-                response.render('torrentrss', {
+        MongoClient.connect(mongodb, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 }, (err, db) => {
+            if (err) throw err
+            db.db(mongodb.split('/')[3]).collection(`privatehd_${req.query.pid}`).find({}).sort({date: -1}).limit(128).toArray((err, data) => {
+                if (err) throw err
+                res.type('application/xml')
+                res.render('torrentrss', {
                     rss_title: 'PrivateHD | 1080p.*(WEB-DL|WEB DL).*(CMRG|EVO) | Movies',
                     rss_link: 'https://privatehd.to/',
                     rss_description: 'Custom PrivateHD RSS Feed',
@@ -91,20 +93,20 @@ app.get('/privatehd', (request, response) => {
             })
         })
     } else {
-        response.status(401).render('error', {status: '401: Unauthorized'})
+        res.status(401).render('error', {status: '401: Unauthorized'})
     }
 })
 
-app.get('/torrentgalaxy', (request, response) => {
+app.get('/torrentgalaxy', (req, res) => {
     torrentrss.search('torrentgalaxy', 'https://torrentgalaxy.to/rss?user=44', mongodb, {
         regex: '1080p.*(WEB-DL|WEB DL).*(CMRG|EVO)'
     })
-    MongoClient.connect(mongodb.substring(0, mongodb.lastIndexOf('/')), {useUnifiedTopology: true}, (error, db) => {
-        if (error) throw error
-        db.db(mongodb.split('/')[3]).collection(`torrentgalaxy`).find({}).sort({date: -1}).limit(128).toArray((error, data) => {
-            if (error) throw error
-            response.type('application/xml')
-            response.render('torrentrss', {
+    MongoClient.connect(mongodb, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 }, (err, db) => {
+        if (err) throw err
+        db.db(mongodb.split('/')[3]).collection(`torrentgalaxy`).find({}).sort({date: -1}).limit(128).toArray((err, data) => {
+            if (err) throw err
+            res.type('application/xml')
+            res.render('torrentrss', {
                 rss_title: 'TorrentGalaxy | 1080p.*(WEB-DL|WEB DL).*(CMRG|EVO) | Movies',
                 rss_link: 'https://torrentgalaxy.to/',
                 rss_description: 'Custom TorrentGalaxy RSS Feed',
@@ -115,8 +117,8 @@ app.get('/torrentgalaxy', (request, response) => {
     })
 })
 
-app.use((request, response, next) => {
-    response.status(404).render('error', {status: '404'})
+app.use((req, res, next) => {
+    res.status(404).render('error', {status: '404'})
 })
 
 app.listen(app.get('port'), () => {

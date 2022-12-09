@@ -3,7 +3,7 @@ const Parser = require('rss-parser')
 const parser = new Parser()
 const parseTorrent = require('parse-torrent')
 const {encode,decode} = require('html-entities')
-const MongoClient = require('mongodb').MongoClient
+const { MongoClient, ServerApiVersion } = require('mongodb')
 
 
 module.exports = {
@@ -55,7 +55,7 @@ function search_next(provider, request_url, mongodb, options) {
                                     size: parsedTorrent.length,
                                     link: decode(item.enclosure.url)
                                 }
-                                MongoClient.connect(mongodb.substring(0, mongodb.lastIndexOf('/')), {useUnifiedTopology: true}, (error, db) => {
+                                MongoClient.connect(mongodb.substring(0, mongodb.lastIndexOf('/')), { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 }, (error, db) => {
                                     if (error) throw error
                                     db.db(mongodb.split('/')[3]).collection(mongodb.split('/')[4]).countDocuments({guid: parsedTorrent.infoHash}, {limit: 1}, (error, response) => {
                                         if (error) throw error
@@ -82,7 +82,7 @@ function search_next(provider, request_url, mongodb, options) {
                                     size: parsedTorrent.length,
                                     link: decode(item.link)
                                 }
-                                MongoClient.connect(mongodb.substring(0, mongodb.lastIndexOf('/')), {useUnifiedTopology: true}, (error, db) => {
+                                MongoClient.connect(mongodb.substring(0, mongodb.lastIndexOf('/')), { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 }, (error, db) => {
                                     if (error) throw error
                                     db.db(mongodb.split('/')[3]).collection(mongodb.split('/')[4]).countDocuments({guid: parsedTorrent.infoHash}, {limit: 1}, (error, response) => {
                                         if (error) throw error
