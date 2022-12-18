@@ -42,7 +42,7 @@ app.get('/iptorrents', (req, res) => {
             })
         })
     } else {
-        res.status(401).render('error', {status: '401: Unauthorized'})
+        res.status(401).render('error', { status: '401: Unauthorized' })
     }
 })
 
@@ -69,7 +69,7 @@ app.get('/torrenting', (req, res) => {
             })
         })
     } else {
-        res.status(401).render('error', {status: '401: Unauthorized'})
+        res.status(401).render('error', { status: '401: Unauthorized' })
     }
 })
 
@@ -94,7 +94,7 @@ app.get('/privatehd', (req, res) => {
             })
         })
     } else {
-        res.status(401).render('error', {status: '401: Unauthorized'})
+        res.status(401).render('error', { status: '401: Unauthorized' })
     }
 })
 
@@ -104,7 +104,7 @@ app.get('/torrentgalaxy', (req, res) => {
     })
     MongoClient.connect(app.get('mongodb'), { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 }, (err, db) => {
         if (err) throw err
-        db.db(app.get('mongodb').split('/')[3]).collection(`torrentgalaxy`).find({}).sort({date: -1}).limit(128).toArray((err, data) => {
+        db.db(app.get('mongodb').split('/')[3]).collection('torrentgalaxy').find({}).sort({date: -1}).limit(128).toArray((err, data) => {
             if (err) throw err
             res.type('application/xml')
             res.render('torrentrss', {
@@ -121,6 +121,11 @@ app.get('/torrentgalaxy', (req, res) => {
 app.use((req, res, next) => {
     res.status(404).render('error', {status: '404'})
 })
+
+app.listen(app.get('port'), () => {
+    console.log('NodeJS started on localhost:' + app.get('port') + '; press Ctrl-C to terminate.')
+})
+
 
 cron.schedule('*/5 * * * *', () => {
     torrentrss.search('iptorrents', 'https://iptorrents.com/torrents/rss', app.get('mongodb'), {
@@ -142,8 +147,4 @@ cron.schedule('*/5 * * * *', () => {
     torrentrss.search('torrentgalaxy', 'https://torrentgalaxy.to/rss?user=44', app.get('mongodb'), {
         regex: '1080p.*(WEB-DL|WEB DL).*(CMRG|EVO)'
     })
-})
-
-app.listen(app.get('port'), () => {
-    console.log('NodeJS started on https://rss.jamestgh.com; press Ctrl-C to terminate.')
 })
